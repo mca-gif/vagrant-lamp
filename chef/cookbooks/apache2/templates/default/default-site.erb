@@ -54,4 +54,7 @@
             ErrorDocument 403 /error/noindex.html
         </LocationMatch>
         <% end -%>
+        
+        # Prevent stale cache problems at the VirtualMachine level
+	EnableSendfile Off
 </VirtualHost>
