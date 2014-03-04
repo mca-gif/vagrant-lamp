@@ -20,15 +20,26 @@ Requirements
 Usage
 -----
 
+## Startup
 	$ git clone http://www.github.com/mattandersen/vagrant-lamp
 	$ cd vagrant-lamp
 	$ vagrant up
 
 That is pretty simple.
 
+## Connecting
+
+### Apache
+The Apache server is available at port 8888.
+
+### MySQL
+Externally the MySQL server is available at port 8889, and when running on the VM it is available as a socket or at port 3306 as usual.
+Username: root
+Password: root
+
 Technical Details
 -----------------
-* Ubuntu 12.04 (Precise Pangolin)
+* Ubuntu 12.04 64-bit (Precise Pangolin)
 * Apache 2
 * PHP 5.3
 * MySQL 5.5
