@@ -54,6 +54,7 @@ Vagrant::Config.run do |config|
 	chef.add_recipe "php::module_mysql"
 	chef.add_recipe "apache2::mod_php5"
 	chef.add_recipe "apache2::mod_rewrite"
+  chef.add_recipe "lamp"
 
 	chef.json = {
 		:apache => {
