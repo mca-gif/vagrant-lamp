@@ -2,7 +2,7 @@
 # Cookbook Name:: apache2
 # Definition:: apache_conf
 #
-# Copyright 2008-2009, Opscode, Inc.
+# Copyright 2008-20013, Opscode, Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -19,8 +19,8 @@
 
 define :apache_conf do
   template "#{node['apache']['dir']}/mods-available/#{params[:name]}.conf" do
-    source "mods/#{params[:name]}.conf.erb"
-    notifies :restart, resources(:service => "apache2")
-    mode 0644
+    source   "mods/#{params[:name]}.conf.erb"
+    mode     '0644'
+    notifies :reload, 'service[apache2]'
   end
 end

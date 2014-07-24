@@ -1,0 +1,31 @@
+{
+    "apache": {
+        "version": "2.4",
+        "dir": "/etc/httpd",
+        "lib_dir": "/usr/lib64/httpd",
+        "cache_dir": "/var/cache/httpd",
+        "conf": "/etc/httpd/conf/httpd.conf",
+        "perl_pkg": "perl",
+        "log_dir": "/var/log/httpd",
+        "root_group": "root",
+        "service_name": "httpd",
+        "service_restart_command": "/sbin/service httpd restart && sleep 1",
+        "service_reload_command": "/sbin/service httpd reload && sleep 1",
+        "default_modules": [
+            "status",
+            "alias",
+            "auth_basic",
+            "authn_file",
+            "authz_core",
+            "authz_groupfile",
+            "authz_host",
+            "authz_user",
+            "autoindex",
+            "dir",
+            "env",
+            "mime",
+            "negotiation",
+            "setenvif"
+        ]
+    }
+}

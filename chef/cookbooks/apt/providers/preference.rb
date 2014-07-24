@@ -19,32 +19,43 @@
 
 # Build preferences.d file contents
 def build_pref(package_name, pin, pin_priority)
-  preference_content = "Package: #{package_name}\nPin: #{pin}\nPin-Priority: #{pin_priority}\n"
+  "Package: #{package_name}\nPin: #{pin}\nPin-Priority: #{pin_priority}\n"
 end
 
 action :add do
   new_resource.updated_by_last_action(false)
 
-  preference = build_pref(new_resource.package_name,
-                          new_resource.pin,
-                          new_resource.pin_priority)
+  preference = build_pref(
+    new_resource.glob || new_resource.package_name,
+    new_resource.pin,
+    new_resource.pin_priority
+    )
 
-  preference_file = file "/etc/apt/preferences.d/#{new_resource.package_name}" do
-    owner "root"
-    group "root"
-    mode 0644
+  preference_dir = directory '/etc/apt/preferences.d' do
+    owner 'root'
+    group 'root'
+    mode 00755
+    recursive true
+    action :nothing
+  end
+
+  preference_file = file "/etc/apt/preferences.d/#{new_resource.name}" do
+    owner 'root'
+    group 'root'
+    mode 00644
     content preference
     action :nothing
   end
 
+  preference_dir.run_action(:create)
   # write out the preference file, replace it if it already exists
   preference_file.run_action(:create)
 end
 
 action :remove do
-  if ::File.exists?("/etc/apt/preferences.d/#{new_resource.package_name}")
-    Chef::Log.info "Un-pinning #{new_resource.package_name} from /etc/apt/preferences.d/"
-    file "/etc/apt/preferences.d/#{new_resource.package_name}" do
+  if ::File.exists?("/etc/apt/preferences.d/#{new_resource.name}")
+    Chef::Log.info "Un-pinning #{new_resource.name} from /etc/apt/preferences.d/"
+    file "/etc/apt/preferences.d/#{new_resource.name}" do
       action :delete
     end
     new_resource.updated_by_last_action(true)

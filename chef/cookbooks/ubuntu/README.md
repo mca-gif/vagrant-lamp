@@ -19,8 +19,13 @@ Attributes
 
 See `attributes/default.rb` for default values.
 
-* `node['ubuntu']['archive_url']` - archived package repo URL
-* `node['ubuntu']['security_url']` - security update package repo URL
+* `node['ubuntu']['archive_url']` - Archived package repo URL
+* `node['ubuntu']['security_url']` - Security update package repo URL
+* `node['ubuntu']['include_source_packages']` - Add source packages to the apt sources.  Defaults to true
+* `node['ubuntu']['architectures']` - Optional array of architectures to download from the repos.  Defaults to nil and all archs are used
+* `node['ubuntu']['components']` - Repository components to use.  Defaults to "main restricted universe multiverse"
+* `node['ubuntu']['locale']` - The locale to set the OS to
+* `node['ubuntu']['codename']` - A codename to use, defaults to `node['lsb']['codename']`, e.g. `precise`.
 
 Recipes
 =======
@@ -46,8 +51,10 @@ License and Author
 
 Author:: Adam Jacob <adam@opscode.com>
 Author:: Joshua Timberman <joshua@opscode.com>
+Author:: Tim Smith <tsmith84@gmail.com>
 
 Copyright:: 2008-2011, Opscode, Inc
+Copyright:: 2014, Chef Software, Inc.
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.

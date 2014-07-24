@@ -1,0 +1,46 @@
+driver:
+  name: vagrant
+
+platforms:
+  - name: debian-7.2.0
+    run_list: apt::default
+  - name: ubuntu-10.04
+    run_list: apt::default
+  - name: ubuntu-12.04
+    run_list: apt::default
+  - name: ubuntu-13.04
+    run_list: apt::default
+  - name: ubuntu-13.10
+    run_list: apt::default
+
+suites:
+  - name: default
+    run_list:
+      - recipe[minitest-handler]
+      - recipe[apt_test]
+
+  - name: cacher-client
+    run_list:
+      - recipe[minitest-handler]
+      - recipe[apt_test::cacher-client]
+
+  - name: cacher-ng
+    run_list:
+      - recipe[minitest-handler]
+      - recipe[apt_test::cacher-ng]
+
+  - name: cacher-ng-client
+    run_list:
+      - recipe[minitest-handler]
+      - recipe[apt_test::cacher-ng-client]
+    attributes:
+      apt:
+        cacher_dir: '/tmp/apt-cacher'
+        cacher_port: '9876'
+        cacher_interface: 'eth0'
+        compiletime: true
+
+  - name: lwrps
+    run_list:
+      - recipe[minitest-handler]
+      - recipe[apt_test::lwrps]

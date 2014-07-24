@@ -14,8 +14,8 @@ else
 fi
 
 #figure out if we're on a prefork or threaded mpm
-if [ -x /usr/sbin/apache2 ]; then
-        PREFORK=`/usr/sbin/apache2 -l | grep prefork || true`
+if [ -x <%= node['apache']['binary'] %> ]; then
+    PREFORK=`<%= node['apache']['binary'] %> -l | grep prefork || true`
 fi
 
 if [ -e $SYSCONFDIR/mods-enabled/$MODNAME.load -a -e $SYSCONFDIR/mods-enabled/$MODNAME.conf ]; then

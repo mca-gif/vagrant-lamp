@@ -20,34 +20,31 @@ Requirements
 Usage
 -----
 
-## Startup
+### Startup
 	$ git clone http://www.github.com/mattandersen/vagrant-lamp
 	$ cd vagrant-lamp
 	$ vagrant up
 
 That is pretty simple.
 
-## Connecting
+### Connecting
 
-### Apache
-The Apache server is available at port 8888.
+#### Apache
+The Apache server is available at <http://localhost:8888>
 
-### MySQL
+#### MySQL
 Externally the MySQL server is available at port 8889, and when running on the VM it is available as a socket or at port 3306 as usual.
 Username: root
 Password: root
 
 Technical Details
 -----------------
-* Ubuntu 12.04 64-bit (Precise Pangolin)
+* Ubuntu 14.04 64-bit
 * Apache 2
-* PHP 5.3
+* PHP 5.5
 * MySQL 5.5
 
-* HTTP port: 8888 (i.e. <http://localhost:8888>)
-* MySQL port: 8889
-
-I am using the base Ubuntu 12.04 box from Vagrant. If you don't already have it downloaded
+We are using the base Ubuntu 14.04 box from Vagrant. If you don't already have it downloaded
 the Vagrantfile has been configured to do it for you. This only has to be done once
 for each account on your host computer.
 
@@ -56,3 +53,28 @@ The web root is located in the project directory at `htdocs` and you can install
 And like any other vagrant file you have SSH access with
 
 	$ vagrant ssh
+
+Maintenance
+-----------
+### Included Chef Cookbooks
+- https://github.com/onehealth-cookbooks/apache2
+- https://github.com/opscode-cookbooks/apt
+- https://github.com/opscode-cookbooks/build-essential
+- https://github.com/opscode-cookbooks/php
+- https://github.com/opscode-cookbooks/mysql
+- https://github.com/opscode-cookbooks/ubuntu
+
+### Included To Satisfy Dependancies
+The new cookbooks have a lot more required dependancies, and Chef will fail if they are not present. They are included to make installation go smoothly, and because editing out the dependancies would make maintenance more difficult.
+- https://github.com/cookbooks/logrotate
+- https://github.com/cookbooks/pacman
+- https://github.com/opscode-cookbooks/chef_handler
+- https://github.com/opscode-cookbooks/freebsd
+- https://github.com/opscode-cookbooks/iis
+- https://github.com/opscode-cookbooks/iptables
+- https://github.com/opscode-cookbooks/windows
+- https://github.com/opscode-cookbooks/xml
+- https://github.com/opscode-cookbooks/yum
+- https://github.com/opscode-cookbooks/yum-epel
+- https://github.com/opscode-cookbooks/yum-mysql-community
+- https://github.com/sethvargo/chef-sugar

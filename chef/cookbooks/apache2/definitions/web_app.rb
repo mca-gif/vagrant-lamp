@@ -2,7 +2,7 @@
 # Cookbook Name:: apache2
 # Definition:: web_app
 #
-# Copyright 2008-2009, Opscode, Inc.
+# Copyright 2008-2013, Opscode, Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -17,33 +17,33 @@
 # limitations under the License.
 #
 
-define :web_app, :template => "web_app.conf.erb", :enable => true do
-  
+define :web_app, :template => 'web_app.conf.erb', :local => false, :enable => true do
+
   application_name = params[:name]
 
-  include_recipe "apache2"
-  include_recipe "apache2::mod_rewrite"
-  include_recipe "apache2::mod_deflate"
-  include_recipe "apache2::mod_headers"
-  
+  include_recipe 'apache2::default'
+  include_recipe 'apache2::mod_rewrite'
+  include_recipe 'apache2::mod_deflate'
+  include_recipe 'apache2::mod_headers'
+
   template "#{node['apache']['dir']}/sites-available/#{application_name}.conf" do
-    source params[:template]
-    owner "root"
-    group node['apache']['root_group']
-    mode 0644
-    if params[:cookbook]
-      cookbook params[:cookbook]
-    end
+    source   params[:template]
+    local    params[:local]
+    owner    'root'
+    group    node['apache']['root_group']
+    mode     '0644'
+    cookbook params[:cookbook] if params[:cookbook]
     variables(
       :application_name => application_name,
-      :params => params
+      :params           => params
     )
     if ::File.exists?("#{node['apache']['dir']}/sites-enabled/#{application_name}.conf")
-      notifies :reload, resources(:service => "apache2"), :delayed
+      notifies :reload, 'service[apache2]'
     end
   end
-  
+
+  site_enabled = params[:enable]
   apache_site "#{params[:name]}.conf" do
-    enable params[:enable]
+    enable site_enabled
   end
 end

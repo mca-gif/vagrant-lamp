@@ -29,3 +29,5 @@ end
 php_pear_channel 'pecl.php.net' do
   action :update
 end
+
+include_recipe "php::ini"

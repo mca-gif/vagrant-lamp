@@ -19,17 +19,17 @@
 # limitations under the License.
 #
 
-case node['platform']
-when "centos", "redhat", "fedora", "scientific"
-  pearhub_chan = php_pear_channel "pearhub.org" do
+case node['platform_family']
+when 'rhel', 'fedora'
+  pearhub_chan = php_pear_channel 'pearhub.org' do
     action :discover
   end
-  php_pear "FPDF" do
+  php_pear 'FPDF' do
     channel pearhub_chan.channel_name
     action :install
   end
-when "debian", "ubuntu"
-  package "php-fpdf" do
+when 'debian'
+  package 'php-fpdf' do
     action :install
   end
 end

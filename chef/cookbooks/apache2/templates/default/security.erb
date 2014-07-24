@@ -11,7 +11,6 @@
 #	Deny from all
 #</Directory>
 
-
 # Changing the following options will not really affect the security of the
 # server, but might make attacks slightly more difficult in some cases.
 
@@ -23,8 +22,7 @@
 # Set to one of:  Full | OS | Minimal | Minor | Major | Prod
 # where Full conveys the most information, and Prod the least.
 #
-#ServerTokens Minimal
-ServerTokens <%= node['apache']['servertokens'] %> 
+ServerTokens <%= node['apache']['servertokens'] %>
 
 #
 # Optionally add a line containing the server version and virtual host
@@ -34,8 +32,7 @@ ServerTokens <%= node['apache']['servertokens'] %>
 # Set to "EMail" to also include a mailto: link to the ServerAdmin.
 # Set to one of:  On | Off | EMail
 #
-#ServerSignature Off
-ServerSignature <%= node['apache']['serversignature'] %> 
+ServerSignature <%= node['apache']['serversignature'] %>
 
 #
 # Allow TRACE method
@@ -45,6 +42,5 @@ ServerSignature <%= node['apache']['serversignature'] %>
 #
 # Set to one of:  On | Off | extended
 #
-#TraceEnable Off
-TraceEnable <%= node['apache']['traceenable'] %> 
+TraceEnable <%= node['apache']['traceenable'] %>
 

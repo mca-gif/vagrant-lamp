@@ -2,7 +2,7 @@
 # Cookbook Name:: apache2
 # Recipe:: god_monitor
 #
-# Copyright 2008-2009, Opscode, Inc.
+# Copyright 2008-2013, Opscode, Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -17,17 +17,17 @@
 # limitations under the License.
 #
 
-apache_service = service "apache2" do
+apache_service = service 'apache2' do
   action :nothing
 end
 
-start_command = apache_service.start_command
-stop_command = apache_service.stop_command
+start_command   = apache_service.start_command
+stop_command    = apache_service.stop_command
 restart_command = apache_service.restart_command
 
-god_monitor "apache2" do
-  config "apache2.god.erb"
-  start (start_command)?start_command : "/etc/init.d/#{apache_service.service_name} start"
-  restart (restart_command)?restart_command : "/etc/init.d/#{apache_service.service_name} restart"
-  stop (stop_command)?stop_command : "/etc/init.d/#{apache_service.service_name} stop"
+god_monitor 'apache2' do
+  config 'apache2.god.erb'
+  start   start_command   || "/etc/init.d/#{apache_service.service_name} start"
+  restart restart_command || "/etc/init.d/#{apache_service.service_name} restart"
+  stop    stop_command    || "/etc/init.d/#{apache_service.service_name} stop"
 end

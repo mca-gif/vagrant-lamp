@@ -2,7 +2,7 @@
 # Cookbook Name:: apache2
 # Recipe:: include
 #
-# Copyright 2012, Opscode, Inc.
+# Copyright 2012-2013, Opscode, Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -17,4 +17,6 @@
 # limitations under the License.
 #
 
-apache_module "include"
+apache_module 'include' do
+  conf true
+end

@@ -1,8 +1,8 @@
 #
 # Cookbook Name:: apache2
-# Recipe:: python 
+# Recipe:: python
 #
-# Copyright 2008-2009, Opscode, Inc.
+# Copyright 2008-2013, Opscode, Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -17,16 +17,22 @@
 # limitations under the License.
 #
 
-case node['platform']
-  when "debian", "ubuntu"
-    package "libapache2-mod-python" do
-      action :install
-    end
-  when "redhat", "centos", "scientific", "fedora", "amazon"
-    package "mod_python" do
-      action :install
-      notifies :run, resources(:execute => "generate-module-list"), :immediately
-    end
+case node['platform_family']
+when 'debian'
+  package 'libapache2-mod-python'
+when 'suse'
+  package 'apache2-mod_python' do
+    notifies :run, 'execute[generate-module-list]', :immediately
+  end
+when 'rhel', 'fedora'
+  package 'mod_python' do
+    notifies :run, 'execute[generate-module-list]', :immediately
+  end
 end
 
-apache_module "python"
+file "#{node['apache']['dir']}/conf.d/python.conf" do
+  action :delete
+  backup false
+end
+
+apache_module 'python'

@@ -1,16 +1,17 @@
-<VirtualHost *:80>
+<VirtualHost *:<%= @params[:server_port] || node['apache']['listen_ports'].first %>>
   ServerName <%= @params[:server_name] %>
-  ServerAlias <% @params[:server_aliases].each do |a| %><%= "#{a}" %> <% end %>
+  <% if @params[:server_aliases] -%>
+  ServerAlias <%= @params[:server_aliases].join " " %>
+  <% end -%>
   DocumentRoot <%= @params[:docroot] %>
-  RewriteEngine On
-  
+
   <Directory <%= @params[:docroot] %>>
-    Options FollowSymLinks
-    AllowOverride None
+    Options <%= [@params[:directory_options] || "FollowSymLinks" ].flatten.join " " %>
+    AllowOverride <%= [@params[:allow_override] || "None" ].flatten.join " " %>
     Order allow,deny
     Allow from all
   </Directory>
-  
+
   <Directory />
     Options FollowSymLinks
     AllowOverride None
@@ -27,6 +28,10 @@
   LogLevel info
   ErrorLog <%= node['apache']['log_dir'] %>/<%= @params[:name] %>-error.log
   CustomLog <%= node['apache']['log_dir'] %>/<%= @params[:name] %>-access.log combined
+
+  <% if @params[:directory_index] -%>
+  DirectoryIndex <%= [@params[:directory_index]].flatten.join " " %>
+  <% end -%>
 
   RewriteEngine On
   RewriteLog <%= node['apache']['log_dir'] %>/<%= @application_name %>-rewrite.log

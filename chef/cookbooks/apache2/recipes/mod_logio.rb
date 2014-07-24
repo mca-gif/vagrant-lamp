@@ -1,8 +1,8 @@
 #
 # Cookbook Name:: apache2
-# Recipe:: logio 
+# Recipe:: logio
 #
-# Copyright 2008-2009, Opscode, Inc.
+# Copyright 2008-2013, Opscode, Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -17,8 +17,8 @@
 # limitations under the License.
 #
 
-if platform?("redhat", "centos", "scientific", "fedora", "suse", "arch", "freebsd", "amazon")
-  apache_module "logio"
+if platform_family?('rhel', 'fedora', 'suse', 'arch', 'freebsd')
+  apache_module 'logio'
 else
-  include_recipe "apache2"
+  include_recipe 'apache2::default'
 end

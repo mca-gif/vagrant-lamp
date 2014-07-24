@@ -2,11 +2,11 @@ require 'tmpdir'
 
 def run(cmd)
   %x{#{cmd}}
-  assert $?.success?
+  assert $CHILD_STATUS.success?
 end
 
 def svn_commit_new_file(filename, content)
-  File.open(filename, 'w') {|f| f.write(content) }
+  File.open(filename, 'w') { |f| f.write(content) }
   run "svn add #{filename} && svn commit -m 'Committed a change.'"
 end
 

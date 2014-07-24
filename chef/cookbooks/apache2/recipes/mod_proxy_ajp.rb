@@ -1,8 +1,8 @@
 #
 # Cookbook Name:: apache2
-# Recipe:: proxy 
+# Recipe:: proxy
 #
-# Copyright 2008-2009, Opscode, Inc.
+# Copyright 2008-2013, Opscode, Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -17,5 +17,5 @@
 # limitations under the License.
 #
 
-include_recipe "apache2::mod_proxy"
-apache_module "proxy_ajp"
+include_recipe 'apache2::mod_proxy'
+apache_module 'proxy_ajp'

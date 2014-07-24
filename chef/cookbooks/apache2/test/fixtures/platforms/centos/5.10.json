@@ -1,0 +1,36 @@
+{
+    "apache": {
+        "package": "httpd",
+        "binary": "/usr/sbin/httpd",
+        "dir": "/etc/httpd",
+        "lib_dir": "/usr/lib64/httpd",
+        "libexec_dir": "/usr/lib64/httpd/modules",
+        "cache_dir": "/var/cache/httpd",
+        "cgibin_dir": "/var/www/cgi-bin",
+        "docroot_dir": "/var/www/html",
+        "conf": "/etc/httpd/conf/httpd.conf",
+        "perl_pkg": "perl",
+        "log_dir": "/var/log/httpd",
+        "root_group": "root",
+        "service_name": "httpd",
+        "service_restart_command": "/sbin/service httpd restart && sleep 1",
+        "service_reload_command": "/sbin/service httpd reload && sleep 1",
+        "default_site_enabled": false,
+        "default_modules": [
+            "status",
+            "alias",
+            "auth_basic",
+            "authn_file",
+            "authz_default",
+            "authz_groupfile",
+            "authz_host",
+            "authz_user",
+            "autoindex",
+            "dir",
+            "env",
+            "mime",
+            "negotiation",
+            "setenvif"
+        ]
+    }
+}

@@ -1,8 +1,8 @@
 #
 # Cookbook Name:: apache2
-# Recipe:: log_config 
+# Recipe:: log_config
 #
-# Copyright 2008-2009, Opscode, Inc.
+# Copyright 2008-2013, Opscode, Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -17,8 +17,8 @@
 # limitations under the License.
 #
 
-if platform?("redhat", "centos", "scientific", "fedora", "suse", "arch", "freebsd", "amazon")
-  apache_module "log_config"
+if platform_family?('rhel', 'fedora', 'suse', 'arch', 'freebsd')
+  apache_module 'log_config'
 else
-  include_recipe "apache2"
+  include_recipe 'apache2::default'
 end

@@ -27,19 +27,19 @@ end
 
 def default_page_present?(body)
   ['This is the default web page for this server.',
-   'Apache HTTP Server Test Page'].any?{|msg| body.include? msg}
+   'Apache HTTP Server Test Page'].any? { |msg| body.include? msg }
 end
 
 # Filenames in a directory listing response
 def dir_listing_entries
-  Nokogiri::HTML(http_response.body).xpath("//td/a/text()").map{|a| a.to_s}
+  Nokogiri::HTML(http_response.body).xpath('//td/a/text()').map { |a| a.to_s }
 end
 
 def environment_variables(response_body)
-  Hash[response_body.split("\n").map{|v| v.split('=')}]
+  Hash[response_body.split("\n").map { |v| v.split('=') }]
 end
 
-def http_request(path, options={})
+def http_request(path, options = {})
   if options.key?(:digest_auth)
     # HTTParty digest doesn't appear to work
     @response = http_request_digest_curl(path, options)
@@ -52,13 +52,14 @@ end
 def http_request_digest_curl(path, options)
   credentials = "#{options[:digest_auth][:username]}:#{options[:digest_auth][:password]}"
   curl_response = %x{curl -s -i --digest -u #{credentials} http://#{test_host}:#{http_port}#{path}}
-  assert $?.success?
+  assert $CHILD_STATUS.success?
   @response = Class.new do
     def initialize(response)
       @curl_response = response
     end
+
     def code
-      @curl_response.scan(%r{HTTP/1.1 ([0-9]+)}).flatten.last.to_i
+      @curl_response.scan(/HTTP\/1.1 ([0-9]+)/).flatten.last.to_i
     end
   end.new(curl_response)
 end
@@ -73,7 +74,7 @@ end
 
 def http_response_version(user_agent, protocol_version)
   response_line = %x{curl -s #{'-0 ' if protocol_version == '1.0'} -i -A '#{user_agent}' 'http://#{test_host}/' | head -n1}
-  assert $?.success?
+  assert $CHILD_STATUS.success?
   response_line.scan(/HTTP\/([0-9]+\.[0-9]+) [0-9]+.*/).flatten.first
 end
 
@@ -82,5 +83,5 @@ def max_age_seconds(http_headers)
 end
 
 def request_parameters(response_body)
-  Hash[*Nokogiri::HTML(response_body).xpath("//td/text()").map{|h| h.to_s.strip.sub(/:$/, '')}]
+  Hash[*Nokogiri::HTML(response_body).xpath('//td/text()').map { |h| h.to_s.strip.sub(/:$/, '') }]
 end

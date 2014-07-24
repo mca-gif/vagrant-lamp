@@ -1,0 +1,25 @@
+driver_plugin: vagrant
+driver_config:
+  require_chef_omnibus: true
+
+platforms:
+  - name: ubuntu-12.04
+    run_list:
+      - recipe[apt::default]
+  - name: centos-6.4
+
+suites:
+  - name: default
+    run_list:
+      - recipe[xml::default]
+  - name: ruby
+    run_list:
+      - recipe[xml::ruby]
+  - name: ruby-syslibs
+    run_list:
+      - recipe[xml::ruby]
+    attributes:
+      xml:
+        nokogiri:
+          use_system_libraries: true
+          version: "1.6.1"

@@ -4,7 +4,7 @@
 #
 # modified from the python recipe by Jeremy Bingham
 #
-# Copyright 2008-2009, Opscode, Inc.
+# Copyright 2008-2013, Opscode, Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -19,27 +19,37 @@
 # limitations under the License.
 #
 
-case node['platform']
-  when "debian", "ubuntu"
-    package "libapache2-mod-apreq2" do
-      action :install
-    end
-  when "centos", "redhat", "fedora", "amazon", "scientific"
-    package "libapreq2" do
-      action :install
-      notifies :run, resources(:execute => "generate-module-list"), :immediately
-    end
-    # seems that the apreq lib is weirdly broken or something - it needs to be
-    # loaded as "apreq", but on RHEL & derivitatives the file needs a symbolic
-    # link to mod_apreq.so.
-    link "/usr/lib64/httpd/modules/mod_apreq.so" do
-      to "/usr/lib64/httpd/modules/mod_apreq2.so"
-      only_if "test -f /usr/lib64/httpd/modules/mod_apreq2.so"
-    end
-    link "/usr/lib/httpd/modules/mod_apreq.so" do
-      to "/usr/lib/httpd/modules/mod_apreq2.so"
-      only_if "test -f /usr/lib/httpd/modules/mod_apreq2.so"
-    end
+include_recipe 'apache2::default'
+
+case node['platform_family']
+when 'debian'
+  package 'libapache2-mod-apreq2'
+when 'suse'
+  package 'apache2-mod_apreq2' do
+    notifies :run, 'execute[generate-module-list]', :immediately
+  end
+when 'rhel', 'fedora'
+  package 'libapreq2' do
+    notifies :run, 'execute[generate-module-list]', :immediately
+  end
+
+  # seems that the apreq lib is weirdly broken or something - it needs to be
+  # loaded as 'apreq', but on RHEL & derivitatives the file needs a symbolic
+  # link to mod_apreq.so.
+  link '/usr/lib64/httpd/modules/mod_apreq.so' do
+    to      '/usr/lib64/httpd/modules/mod_apreq2.so'
+    only_if 'test -f /usr/lib64/httpd/modules/mod_apreq2.so'
+  end
+
+  link '/usr/lib/httpd/modules/mod_apreq.so' do
+    to      '/usr/lib/httpd/modules/mod_apreq2.so'
+    only_if 'test -f /usr/lib/httpd/modules/mod_apreq2.so'
+  end
 end
 
-apache_module "apreq"
+file "#{node['apache']['dir']}/conf.d/apreq.conf" do
+  action :delete
+  backup false
+end
+
+apache_module 'apreq'

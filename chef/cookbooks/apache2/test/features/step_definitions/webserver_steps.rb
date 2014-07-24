@@ -1,16 +1,16 @@
-Given /^a new webserver.*$/ do
+Given(/^a new webserver.*$/) do
 
 end
 
-Given /^an alias defined|a path configured to allow directory listing.*$/ do
+Given(/^an alias defined|a path configured to allow directory listing.*$/) do
   # /icons/ is defined by default
 end
 
-When /^a request is made to a (CGI|Java|Perl|Python|PHP) (?:script|application) that generates a list of (?:environment variables|request parameters)$/ do |script_type|
+When(/^a request is made to a (CGI|Java|Perl|Python|PHP) (?:script|application) that generates a list of (?:environment variables|request parameters)$/) do |script_type|
   http_request case script_type
-    when 'CGI' then '/cgi-bin/env'
-    when 'Python' then '/env/python.py'
-    else "/env/#{script_type.downcase}"
+               when 'CGI' then '/cgi-bin/env'
+               when 'Python' then '/env/python.py'
+               else "/env/#{script_type.downcase}"
   end
 end
 
@@ -26,7 +26,7 @@ When 'I request as a known browser that only supports HTTP/1.0' do
   @response_version = http_response_version('JDK/1.0', '1.0')
 end
 
-When /^I request the (?:alias|directory listing) path$/ do
+When(/^I request the (?:alias|directory listing) path$/) do
   http_request '/icons/'
 end
 
@@ -34,7 +34,7 @@ When 'I request the root path of the webapp' do
   http_request '/basic_web_app/'
 end
 
-When /^I request the root url( over HTTPS)?$/ do |secure|
+When(/^I request the root url( over HTTPS)?$/) do |secure|
   if secure
     https_request '/'
   else
@@ -46,10 +46,12 @@ When 'I request the status page from a remote host' do
   http_request '/server-status/'
 end
 
-When /^the authenticated user is (not )?listed (?:in the directory )(?:in the file|as authorized)$/ do |not_listed|
+When(/^the authenticated user is (not )?listed (?:in the directory )(?:in the file|as authorized)$/) do |not_listed|
   http_request '/secure/',
-    :basic_auth => {:username => not_listed ? 'meatballs' : 'bork',
-    :password => 'secret'}
+               :basic_auth => {
+                 :username => not_listed ? 'meatballs' : 'bork',
+                 :password => 'secret'
+               }
 end
 
 When 'the browser requests a page specifying that it does not support compression' do
@@ -60,20 +62,22 @@ When 'the browser requests a page specifying that it supports compression' do
   @response_was_compressed = compresses_response?(:client_supports)
 end
 
-When /^the remote address is (not )?listed as authorized$/ do |not_listed|
+When(/^the remote address is (not )?listed as authorized$/) do |not_listed|
   http_request '/secure/'
 end
 
-When /^the user requests the secure page authenticating with (in)?valid credentials over (basic|digest) auth$/ do |invalid, auth_type|
-  http_request '/secure/', "#{auth_type}_auth".to_sym => {:username => 'bork',
-    :password => invalid ? 'squirrel' : 'secret'}
+When(/^the user requests the secure page authenticating with (in)?valid credentials over (basic|digest) auth$/) do |invalid, auth_type|
+  http_request '/secure/', "#{auth_type}_auth".to_sym => {
+    :username => 'bork',
+    :password => invalid ? 'squirrel' : 'secret'
+  }
 end
 
 When 'the user requests the secure page with no credentials' do
   http_request '/secure/'
 end
 
-Then /^access will be (denied|rejected requiring (?:OpenID )?authentication|granted)$/ do |access|
+Then(/^access will be (denied|rejected requiring (?:OpenID )?authentication|granted)$/) do |access|
   http_response.code.must_equal({
     'denied' => 403,
     'rejected requiring authentication' => 401,
@@ -143,7 +147,7 @@ Then 'the response should be HTTP/1.0 also' do
   @response_version.must_equal '1.0'
 end
 
-Then /^the response will be sent (un)?compressed$/ do |expect_uncompressed|
+Then(/^the response will be sent (un)?compressed$/) do |expect_uncompressed|
   if expect_uncompressed
     refute @response_was_compressed
   else

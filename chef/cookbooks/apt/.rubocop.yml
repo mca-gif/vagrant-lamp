@@ -1,0 +1,25 @@
+AllCops:
+  Excludes:
+    - vendor/**
+
+ClassLength:
+  Enabled: false
+CyclomaticComplexity:
+  Max: 15
+Documentation:
+  Enabled: false
+Encoding:
+  Enabled: false
+HashSyntax:
+  Enabled: false
+LineLength:
+  Enabled: false
+MethodLength:
+  Enabled: false
+TrailingComma:
+  Enabled: false
+
+AssignmentInCondition:
+  Enabled: false
+ParameterLists:
+  Enabled: false
