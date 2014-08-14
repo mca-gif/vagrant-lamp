@@ -53,28 +53,3 @@ The web root is located in the project directory at `htdocs` and you can install
 And like any other vagrant file you have SSH access with
 
 	$ vagrant ssh
-
-Maintenance
------------
-### Included Chef Cookbooks
-- https://github.com/onehealth-cookbooks/apache2
-- https://github.com/opscode-cookbooks/apt
-- https://github.com/opscode-cookbooks/build-essential
-- https://github.com/opscode-cookbooks/php
-- https://github.com/opscode-cookbooks/mysql
-- https://github.com/opscode-cookbooks/ubuntu
-
-### Included To Satisfy Dependancies
-The new cookbooks have a lot more required dependancies, and Chef will fail if they are not present. They are included to make installation go smoothly, and because editing out the dependancies would make maintenance more difficult.
-- https://github.com/cookbooks/logrotate
-- https://github.com/cookbooks/pacman
-- https://github.com/opscode-cookbooks/chef_handler
-- https://github.com/opscode-cookbooks/freebsd
-- https://github.com/opscode-cookbooks/iis
-- https://github.com/opscode-cookbooks/iptables
-- https://github.com/opscode-cookbooks/windows
-- https://github.com/opscode-cookbooks/xml
-- https://github.com/opscode-cookbooks/yum
-- https://github.com/opscode-cookbooks/yum-epel
-- https://github.com/opscode-cookbooks/yum-mysql-community
-- https://github.com/sethvargo/chef-sugar
