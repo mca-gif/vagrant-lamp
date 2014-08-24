@@ -1,0 +1,116 @@
+# -*- mode: ruby -*-
+# vi: set ft=ruby :
+
+# General project settings
+
+# IP Address for the host only network, change it to anything you like
+# but please keep it within the IPv4 private network range
+ip_address = "10.10.10.10"
+
+# The project name is base for directories, hostname and alike
+project_name = "lamp" # http://lamp.local
+
+# Environment variables
+
+MEMORY = ENV['VM_MEMORY'] || '512'
+CORES = ENV['VM_CORES'] || '1'
+ARCH = ENV['VM_ARCH'] || '32'
+
+# Setup script
+$script = <<SCRIPT
+
+    # Update the server
+    #apt-get update && apt-get -y upgrade
+
+    # Install basic tools
+    apt-get -y install build-essential binutils-doc git
+
+    # Install Apache
+    apt-get -y install apache2
+
+    # Configure Apache
+    a2enmod rewrite
+    rm /var/www/html/index.html
+
+    # Install PHP
+    apt-get -y install php5 php-apc php5-memcached php5-cli php5-curl php5-gd php5-imap php5-mysql php5-mcrypt php5-sqlite php5-xdebug php5-xsl php-pear
+
+    # Configure PHP
+    php5enmod mcrypt
+    # Display errors On
+    sed -i "s/display_startup_errors = Off/display_startup_errors = On/g" /etc/php5/apache2/php.ini /etc/php5/cli/php.ini
+    sed -i "s/display_errors = Off/display_errors = On/g" /etc/php5/apache2/php.ini /etc/php5/cli/php.ini
+    # Configure xdebug
+    echo xdebug.remote_enable=On > /etc/php5/apache2/conf.d/21-xdebug.ini
+    echo xdebug.remote_connect_back=On >> /etc/php5/apache2/conf.d/21-xdebug.ini
+    # Set timezone
+    echo date.timezone = Etc/GMT > /etc/php5/apache2/conf.d/20-date.ini
+
+    # Install MySQL
+    echo mysql-server     mysql-server/root_password        password lamp | debconf-set-selections
+    echo mysql-server     mysql-server/root_password_again  password lamp | debconf-set-selections
+    apt-get -y install mysql-client mysql-server
+
+    # Allow root access from any host
+    sed -i "s/bind-address\s*=\s*127.0.0.1/bind-address = 0.0.0.0/" /etc/mysql/my.cnf
+    echo "GRANT ALL PRIVILEGES ON *.* TO 'root'@'%' IDENTIFIED BY 'lamp' WITH GRANT OPTION" | mysql -u root --password=lamp
+    echo "GRANT PROXY ON ''@'' TO 'root'@'%' WITH GRANT OPTION" | mysql -u root --password=lamp
+
+    # Install phpmyadmin
+    echo phpmyadmin       phpmyadmin/reconfigure-webserver  text     apache2    | debconf-set-selections
+    echo phpmyadmin       phpmyadmin/dbconfig-install       boolean  true       | debconf-set-selections
+    echo phpmyadmin       phpmyadmin/app-password-confirm   password lamp       | debconf-set-selections
+    echo phpmyadmin       phpmyadmin/mysql/admin-pass       password lamp       | debconf-set-selections
+    echo phpmyadmin       phpmyadmin/password-confirm       password lamp       | debconf-set-selections
+    echo phpmyadmin       phpmyadmin/setup-password         password lamp       | debconf-set-selections
+    echo phpmyadmin       phpmyadmin/mysql/app-pass         password lamp       | debconf-set-selections
+    apt-get -y install phpmyadmin
+
+    # Restart Services
+    service apache2 restart
+    service mysql restart
+
+    # Install composer
+    curl -sS https://getcomposer.org/installer | php && mv composer.phar /usr/local/bin/composer
+
+    # Configure VM user
+    adduser vagrant www-data
+
+SCRIPT
+
+# Vagrant configuration
+Vagrant.configure("2") do |config|
+
+  # Define VM box to use
+  config.vm.box = "ubuntu/trusty#{ARCH}"
+
+  # Set share folder
+  config.vm.synced_folder "./" , "/var/www/html/", :mount_options => ["dmode=777", "fmode=666"]
+
+  # Provider-specific configuration so you can fine-tune VirtualBox for Vagrant.
+  # These expose provider-specific options.
+  config.vm.provider :virtualbox do |vm|
+    # Use VBoxManage to customize the VM. For example to change memory:
+    vm.customize ["modifyvm", :id, "--memory", MEMORY.to_i]
+    vm.customize ["modifyvm", :id, "--cpus", CORES.to_i]
+
+    if CORES.to_i > 1
+      vm.customize ["modifyvm", :id, "--ioapic", "on"]
+    end
+  end
+
+  # Use hostonly network with a static IP Address and enable
+  # hostmanager so we can have a custom domain for the server
+  # by modifying the host machines hosts file
+  config.hostmanager.enabled = true
+  config.hostmanager.manage_host = true
+  config.vm.define project_name do |node|
+    node.vm.hostname = project_name + ".local"
+    node.vm.network :private_network, ip: ip_address
+    node.hostmanager.aliases = [ "www." + project_name + ".local" ]
+  end
+  config.vm.provision :hostmanager
+
+  config.vm.provision :shell, :inline => $script
+
+end
