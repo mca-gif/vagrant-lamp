@@ -9,8 +9,8 @@ sed -i "s/^${IPADDR}.*//" hosts
 echo $IPADDR ubuntu.localhost >> /etc/hosts			# Just to quiet down some error messages
 
 # Update the server
-#apt-get update
-#apt-get -y upgrade
+apt-get update
+apt-get -y upgrade
 
 # Install basic tools
 apt-get -y install build-essential binutils-doc git
