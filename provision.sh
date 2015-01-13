@@ -4,13 +4,27 @@ php_config_file="/etc/php5/apache2/php.ini"
 xdebug_config_file="/etc/php5/mods-available/xdebug.ini"
 mysql_config_file="/etc/mysql/my.cnf"
 
-IPADDR=$(/sbin/ifconfig eth0 | awk '/inet / { print $2 }' | sed 's/addr://')
-sed -i "s/^${IPADDR}.*//" hosts
-echo $IPADDR ubuntu.localhost >> /etc/hosts			# Just to quiet down some error messages
 
 # Update the server
 apt-get update
 apt-get -y upgrade
+
+if [[ -e /var/lock/vagrant-provision ]]; then
+    exit;
+fi
+
+################################################################################
+# Everything below this line should only need to be done once
+# To re-run full provisioning, delete /var/lock/vagrant-provision and run
+#
+#    $ vagrant provision
+#
+# From the host machine
+################################################################################
+
+IPADDR=$(/sbin/ifconfig eth0 | awk '/inet / { print $2 }' | sed 's/addr://')
+sed -i "s/^${IPADDR}.*//" /etc/hosts
+echo $IPADDR ubuntu.localhost >> /etc/hosts			# Just to quiet down some error messages
 
 # Install basic tools
 apt-get -y install build-essential binutils-doc git
@@ -21,8 +35,14 @@ apt-get -y install php5 php5-curl php5-mysql php5-sqlite php5-xdebug
 
 sed -i "s/display_startup_errors = Off/display_startup_errors = On/g" ${php_config_file}
 sed -i "s/display_errors = Off/display_errors = On/g" ${php_config_file}
-echo "xdebug.remote_enable=On" >> ${xdebug_config_file}
-echo 'xdebug.remote_connect_back=On' >> ${xdebug_config_file}
+
+cat << EOF > ${xdebug_config_file}
+zend_extension=xdebug.so
+xdebug.remote_enable=1
+xdebug.remote_connect_back=1
+xdebug.remote_port=9000
+xdebug.remote_host=10.0.2.2
+EOF
 
 # Install MySQL
 echo "mysql-server mysql-server/root_password password root" | sudo debconf-set-selections
@@ -38,3 +58,8 @@ echo "GRANT PROXY ON ''@'' TO 'root'@'%' WITH GRANT OPTION" | mysql -u root --pa
 # Restart Services
 service apache2 restart
 service mysql restart
+
+# Cleanup the default HTML file created by Apache
+rm /var/www/html/index.html
+
+touch /var/lock/vagrant-provision
