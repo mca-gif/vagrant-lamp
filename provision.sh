@@ -3,6 +3,7 @@
 php_config_file="/etc/php5/apache2/php.ini"
 xdebug_config_file="/etc/php5/mods-available/xdebug.ini"
 mysql_config_file="/etc/mysql/my.cnf"
+apache_site_config="/etc/apache2/sites-available/000-default.conf"
 
 
 # Update the server
@@ -33,6 +34,8 @@ apt-get -y install build-essential binutils-doc git
 apt-get -y install apache2
 apt-get -y install php5 php5-curl php5-mysql php5-sqlite php5-xdebug
 
+apt-get install php5-intl
+
 sed -i "s/display_startup_errors = Off/display_startup_errors = On/g" ${php_config_file}
 sed -i "s/display_errors = Off/display_errors = On/g" ${php_config_file}
 
@@ -55,6 +58,33 @@ sed -i "s/bind-address\s*=\s*127.0.0.1/bind-address = 0.0.0.0/" ${mysql_config_f
 echo "GRANT ALL PRIVILEGES ON *.* TO 'root'@'%' IDENTIFIED BY 'root' WITH GRANT OPTION" | mysql -u root --password=root
 echo "GRANT PROXY ON ''@'' TO 'root'@'%' WITH GRANT OPTION" | mysql -u root --password=root
 
+# Enable mod-rewrite in Apache
+a2enmod rewrite
+
+
+#Allow symlinks
+cat > ${apache_site_config} <<EOF
+<Directory />
+    Options FollowSymLinks
+    AllowOverride All
+</Directory>
+<Directory "/var/www/html">
+    Options Indexes FollowSymLinks MultiViews
+    AllowOverride All
+    Order Allow,Deny
+    Allow from all
+</Directory>
+EOF
+
+
+#Set access rights to CakePHP tmp and log files
+touch /var/www/html/cakephp-folder/logs/error.log
+mkdir var/www/cakephp-folder/tmp/cache/persistent/
+chown -R www-data /var/www/cakephp-folder/tmp
+chown -R www-data /var/www/ncakephp-folder/logs
+chown -R www-data /var/www/cakephp-folder/tmp/cache/persistent/
+
+
 # Restart Services
 service apache2 restart
 service mysql restart
@@ -63,3 +93,5 @@ service mysql restart
 rm /var/www/html/index.html
 
 touch /var/lock/vagrant-provision
+
+

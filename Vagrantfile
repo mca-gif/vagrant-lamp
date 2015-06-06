@@ -11,7 +11,10 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
     config.vm.network "forwarded_port", guest: 80, host: 8888
     config.vm.network "forwarded_port", guest: 3306, host: 8889
 
-    config.vm.synced_folder "htdocs", "/var/www/html"
+    config.vm.synced_folder "htdocs", "/var/www/html", id: "vagrant-root",
+    owner: "vagrant",
+    group: "www-data",
+    mount_options: ["dmode=775,fmode=664"]
 
 	config.vm.provision "shell", path: "provision.sh"
 
