@@ -11,6 +11,8 @@ Vagrant allows for Virtual Machines to be quickly setup, and easy to use.
 
 And this project aims to make it very easy to spinup a complete LAMP stack in a matter of minutes.
 
+Optimized for CakePHP
+
 Requirements
 ------------
 * VirtualBox <http://www.virtualbox.com>
@@ -21,7 +23,7 @@ Usage
 -----
 
 ### Startup
-	$ git clone http://www.github.com/mattandersen/vagrant-lamp
+	$ git clone http://www.github.com/porsa/vagrant-lamp
 	$ cd vagrant-lamp
 	$ vagrant up
 
