@@ -48,7 +48,7 @@ We are using the base Ubuntu 14.04 box from Vagrant. If you don't already have i
 the Vagrantfile has been configured to do it for you. This only has to be done once
 for each account on your host computer.
 
-The web root is located in the project directory at `htdocs` and you can install your files there
+The web root is located in the project directory at `src/` and you can install your files there
 
 And like any other vagrant file you have SSH access with
 
