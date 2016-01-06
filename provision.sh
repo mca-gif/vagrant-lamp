@@ -110,6 +110,18 @@ mysql_go() {
 	echo "GRANT ALL PRIVILEGES ON *.* TO 'root'@'%' IDENTIFIED BY 'root' WITH GRANT OPTION" | mysql -u root --password=root
 	echo "GRANT PROXY ON ''@'' TO 'root'@'%' WITH GRANT OPTION" | mysql -u root --password=root
 
+	if [ -d "/vagrant/provision-sql" ]; then
+		echo "Executing all SQL files in /vagrant/provision-sql folder ..."
+		echo "-------------------------------------"
+		for sql_file in /vagrant/provision-sql/*.sql
+		do
+			echo "EXECUTING $sql_file..."
+	  		time mysql -u root --password=root < $sql_file
+	  		echo "FINISHED $sql_file"
+	  		echo ""
+		done
+	fi
+
 	service mysql restart
 	update-rc.d apache2 enable
 }
