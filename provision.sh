@@ -9,34 +9,30 @@ default_apache_index="/var/www/html/index.html"
 
 # This function is called at the very bottom of the file
 main() {
+	repositories_go
 	update_go
-
-	if [[ -e /var/lock/vagrant-provision ]]; then
-	    cat 1>&2 << EOD
-################################################################################
-# To re-run full provisioning, delete /var/lock/vagrant-provision and run
-#
-#    $ vagrant provision
-#
-# From the host machine
-################################################################################
-EOD
-	    exit
-	fi
-
 	network_go
 	tools_go
 	apache_go
-	php_go
 	mysql_go
+	php_go
+	autoremove_go
+}
 
-	touch /var/lock/vagrant-provision
+repositories_go() {
+	if [[ ! -f "/etc/apt/sources.list.d/ondrej-php5-5_6-trusty.list" ]]; then
+		add-apt-repository -y ppa:ondrej/php5-5.6
+	fi
 }
 
 update_go() {
 	# Update the server
 	apt-get update
-	apt-get -y upgrade
+	# apt-get -y upgrade
+}
+
+autoremove_go() {
+	apt-get -y autoremove
 }
 
 network_go() {
@@ -47,7 +43,7 @@ network_go() {
 
 tools_go() {
 	# Install basic tools
-	apt-get -y install build-essential binutils-doc git
+	apt-get -y install build-essential binutils-doc git subversion
 }
 
 apache_go() {
@@ -57,21 +53,23 @@ apache_go() {
 	sed -i "s/^\(.*\)www-data/\1vagrant/g" ${apache_config_file}
 	chown -R vagrant:vagrant /var/log/apache2
 
-	cat << EOF > ${apache_vhost_file}
+	if [ !-f "${apache_vhost_file}" ]; then
+		cat << EOF > ${apache_vhost_file}
 <VirtualHost *:80>
-        ServerAdmin webmaster@localhost
-        DocumentRoot /vagrant/src
-        LogLevel debug
+    ServerAdmin webmaster@localhost
+    DocumentRoot /vagrant/src
+    LogLevel debug
 
-        ErrorLog /var/log/apache2/error.log
-        CustomLog /var/log/apache2/access.log combined
+    ErrorLog /var/log/apache2/error.log
+    CustomLog /var/log/apache2/access.log combined
 
-        <Directory /vagrant/src>
-            AllowOverride All
-            Require all granted
-        </Directory>
+    <Directory /vagrant/src>
+        AllowOverride All
+        Require all granted
+    </Directory>
 </VirtualHost>
 EOF
+	fi
 
 	a2dissite 000-default
 	a2ensite vagrant_vhost
@@ -83,26 +81,41 @@ EOF
 }
 
 php_go() {
-	apt-get -y install php5 php5-curl php5-mysql php5-sqlite php5-xdebug
+	apt-get -y install php5 php5-curl php5-mysql php5-sqlite php5-xdebug php5-pear
 
 	sed -i "s/display_startup_errors = Off/display_startup_errors = On/g" ${php_config_file}
 	sed -i "s/display_errors = Off/display_errors = On/g" ${php_config_file}
 
-	cat << EOF > ${xdebug_config_file}
+	if [ !-f "{$xdebug_config_file}" ]; then
+		cat << EOF > ${xdebug_config_file}
 zend_extension=xdebug.so
 xdebug.remote_enable=1
 xdebug.remote_connect_back=1
 xdebug.remote_port=9000
 xdebug.remote_host=10.0.2.2
 EOF
+	fi
+
 	service apache2 reload
+
+	# Install latest version of Composer globally
+	if [ !-f "/usr/local/bin/composer" ]; then
+		curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
+	fi
+
+	# Install PHP Unit 4.8 globally
+	if [ !-f "/usr/local/bin/phpunit" ]; then
+		curl -O -L https://phar.phpunit.de/phpunit-old.phar
+		chmod +x phpunit-old.phar
+		mv phpunit-old.phar /usr/local/bin/phpunit
+	fi
 }
 
 mysql_go() {
 	# Install MySQL
-	echo "mysql-server mysql-server/root_password password root" | debconf-set-selections
-	echo "mysql-server mysql-server/root_password_again password root" | debconf-set-selections
-	apt-get -y install mysql-client mysql-server
+	echo "mysql-server-5.6 mysql-server/root_password password root" | debconf-set-selections
+	echo "mysql-server-5.6 mysql-server/root_password_again password root" | debconf-set-selections
+	apt-get -y install mysql-common-5.6 mysql-client-5.6 mysql-server-5.6
 
 	sed -i "s/bind-address\s*=\s*127.0.0.1/bind-address = 0.0.0.0/" ${mysql_config_file}
 
