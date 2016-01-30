@@ -40,9 +40,12 @@ Password: root
 Technical Details
 -----------------
 * Ubuntu 14.04 64-bit
-* Apache 2
-* PHP 5.5
-* MySQL 5.5
+* Apache 2.4
+* PHP 5.6
+* MySQL 5.6
+* XDebug
+* PHPUnit 4.8
+* Composer
 
 We are using the base Ubuntu 14.04 box from Vagrant. If you don't already have it downloaded
 the Vagrantfile has been configured to do it for you. This only has to be done once
