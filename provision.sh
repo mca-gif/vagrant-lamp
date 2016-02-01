@@ -20,7 +20,7 @@ main() {
 }
 
 repositories_go() {
-	if [[ ! -f "/etc/apt/sources.list.d/ondrej-php5-5_6-trusty.list" ]]; then
+	if [ ! -f "/etc/apt/sources.list.d/ondrej-php5-5_6-trusty.list" ]; then
 		add-apt-repository -y ppa:ondrej/php5-5.6
 	fi
 }
@@ -53,7 +53,7 @@ apache_go() {
 	sed -i "s/^\(.*\)www-data/\1vagrant/g" ${apache_config_file}
 	chown -R vagrant:vagrant /var/log/apache2
 
-	if [ !-f "${apache_vhost_file}" ]; then
+	if [ ! -f "${apache_vhost_file}" ]; then
 		cat << EOF > ${apache_vhost_file}
 <VirtualHost *:80>
     ServerAdmin webmaster@localhost
@@ -81,12 +81,12 @@ EOF
 }
 
 php_go() {
-	apt-get -y install php5 php5-curl php5-mysql php5-sqlite php5-xdebug php5-pear
+	apt-get -y install php5 php5-curl php5-mysql php5-sqlite php5-xdebug php-pear
 
 	sed -i "s/display_startup_errors = Off/display_startup_errors = On/g" ${php_config_file}
 	sed -i "s/display_errors = Off/display_errors = On/g" ${php_config_file}
 
-	if [ !-f "{$xdebug_config_file}" ]; then
+	if [ ! -f "{$xdebug_config_file}" ]; then
 		cat << EOF > ${xdebug_config_file}
 zend_extension=xdebug.so
 xdebug.remote_enable=1
@@ -99,12 +99,12 @@ EOF
 	service apache2 reload
 
 	# Install latest version of Composer globally
-	if [ !-f "/usr/local/bin/composer" ]; then
+	if [ ! -f "/usr/local/bin/composer" ]; then
 		curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
 	fi
 
 	# Install PHP Unit 4.8 globally
-	if [ !-f "/usr/local/bin/phpunit" ]; then
+	if [ ! -f "/usr/local/bin/phpunit" ]; then
 		curl -O -L https://phar.phpunit.de/phpunit-old.phar
 		chmod +x phpunit-old.phar
 		mv phpunit-old.phar /usr/local/bin/phpunit
