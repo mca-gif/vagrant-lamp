@@ -25,10 +25,10 @@ Usage
 1. Download one of the releases available [https://github.com/mattandersen/vagrant-lamp/releases](https://github.com/mattandersen/vagrant-lamp/releases)
 2. Extract the ZIP file.
 3. From the command-line:
-
-	$ cd <extracted location>
-	$ vagrant up
-
+```
+$ cd vagrant-lamp-release
+$ vagrant up
+```
 That is pretty simple.
 
 ### Connecting
@@ -58,5 +58,6 @@ for each account on your host computer.
 The web root is located in the project directory at `src/` and you can install your files there
 
 And like any other vagrant file you have SSH access with
-
-	$ vagrant ssh
+```
+$ vagrant ssh
+```
