@@ -6,6 +6,7 @@ php_config_file="/etc/php5/apache2/php.ini"
 xdebug_config_file="/etc/php5/mods-available/xdebug.ini"
 mysql_config_file="/etc/mysql/my.cnf"
 default_apache_index="/var/www/html/index.html"
+project_web_root="src"
 
 # This function is called at the very bottom of the file
 main() {
@@ -55,13 +56,13 @@ apache_go() {
 		cat << EOF > ${apache_vhost_file}
 <VirtualHost *:80>
     ServerAdmin webmaster@localhost
-    DocumentRoot /vagrant/src
+    DocumentRoot /vagrant/${project_web_root}
     LogLevel debug
 
     ErrorLog /var/log/apache2/error.log
     CustomLog /var/log/apache2/access.log combined
 
-    <Directory /vagrant/src>
+    <Directory /vagrant/${project_web_root}>
         AllowOverride All
         Require all granted
     </Directory>
