@@ -2,7 +2,7 @@
 
 apache_config_file="/etc/apache2/envvars"
 apache_vhost_file="/etc/apache2/sites-available/vagrant_vhost.conf"
-php_config_file="/etc/php5/apache2/php.ini"
+php_config_file="/etc/php/7.0/cli/php.ini"
 xdebug_config_file="/etc/php5/mods-available/xdebug.ini"
 mysql_config_file="/etc/mysql/my.cnf"
 default_apache_index="/var/www/html/index.html"
@@ -21,13 +21,13 @@ main() {
 }
 
 repositories_go() {
-	echo "NOOP"
+	add-apt-repository ppa:ondrej/php
 }
 
 update_go() {
 	# Update the server
 	apt-get update
-	# apt-get -y upgrade
+	apt-get -y upgrade
 }
 
 autoremove_go() {
@@ -37,7 +37,7 @@ autoremove_go() {
 network_go() {
 	IPADDR=$(/sbin/ifconfig eth0 | awk '/inet / { print $2 }' | sed 's/addr://')
 	sed -i "s/^${IPADDR}.*//" /etc/hosts
-	echo ${IPADDR} ubuntu.localhost >> /etc/hosts			# Just to quiet down some error messages
+	echo ${IPADDR} ubuntu.localhost >> /etc/hosts # Just to quiet down some error messages
 }
 
 tools_go() {
@@ -80,10 +80,12 @@ EOF
 }
 
 php_go() {
-	apt-get -y install php5 php5-curl php5-mysql php5-sqlite php5-xdebug php5-pear
+    apt-get -y install php7.0 php7.0-fpm php7.0-mysql
 
 	sed -i "s/display_startup_errors = Off/display_startup_errors = On/g" ${php_config_file}
 	sed -i "s/display_errors = Off/display_errors = On/g" ${php_config_file}
+	sed -i "s/post_max_size = 8M/post_max_size = 512M/g" ${php_config_file}
+	sed -i "s/upload_max_filesize = 2M/upload_max_filesize = 512M/g" ${php_config_file}
 
 	if [ ! -f "{$xdebug_config_file}" ]; then
 		cat << EOF > ${xdebug_config_file}
