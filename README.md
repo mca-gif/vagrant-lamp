@@ -45,8 +45,13 @@ Technical Details
 -----------------
 * Ubuntu 14.04 64-bit
 * Apache 2.4
+<<<<<<< HEAD
 * PHP 5.5
 * MySQL 5.5
+=======
+* PHP 5.6
+* MySQL 5.6
+>>>>>>> origin/PHP-5.6_MySQL-5.6
 * XDebug
 * PHPUnit 4.8
 * Composer

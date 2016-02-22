@@ -21,13 +21,19 @@ main() {
 }
 
 repositories_go() {
-	add-apt-repository ppa:ondrej/php
+	if [ ! -f "/etc/apt/sources.list.d/ondrej-php-trusty.list" ]; then
+		add-apt-repository ppa:ondrej/php
+	fi
 }
 
 update_go() {
 	# Update the server
 	apt-get update
-	apt-get -y upgrade
+	# apt-get -y upgrade
+}
+
+autoremove_go() {
+	apt-get -y autoremove
 }
 
 autoremove_go() {
@@ -114,9 +120,9 @@ EOF
 
 mysql_go() {
 	# Install MySQL
-	echo "mysql-server mysql-server/root_password password root" | debconf-set-selections
-	echo "mysql-server mysql-server/root_password_again password root" | debconf-set-selections
-	apt-get -y install mysql-client mysql-server
+	echo "mysql-server-5.6 mysql-server/root_password password root" | debconf-set-selections
+	echo "mysql-server-5.6 mysql-server/root_password_again password root" | debconf-set-selections
+	apt-get -y install mysql-common-5.6 mysql-client-5.6 mysql-server-5.6
 
 	sed -i "s/bind-address\s*=\s*127.0.0.1/bind-address = 0.0.0.0/" ${mysql_config_file}
 
