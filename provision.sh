@@ -8,6 +8,9 @@ mysql_config_file="/etc/mysql/my.cnf"
 default_apache_index="/var/www/html/index.html"
 project_web_root="src"
 
+# Credential Variable
+MYSQL_PW='root'
+
 # This function is called at the very bottom of the file
 main() {
 	repositories_go
@@ -119,8 +122,8 @@ mysql_go() {
 	sed -i "s/bind-address\s*=\s*127.0.0.1/bind-address = 0.0.0.0/" ${mysql_config_file}
 
 	# Allow root access from any host
-	echo "GRANT ALL PRIVILEGES ON *.* TO 'root'@'%' IDENTIFIED BY 'root' WITH GRANT OPTION" | mysql -u root --password=root
-	echo "GRANT PROXY ON ''@'' TO 'root'@'%' WITH GRANT OPTION" | mysql -u root --password=root
+	echo "GRANT ALL PRIVILEGES ON *.* TO 'root'@'%' IDENTIFIED BY 'root' WITH GRANT OPTION" | mysql -u root --password=$MYSQL_PW
+	echo "GRANT PROXY ON ''@'' TO 'root'@'%' WITH GRANT OPTION" | mysql -u root --password=$MYSQL_PW
 
 	if [ -d "/vagrant/provision-sql" ]; then
 		echo "Executing all SQL files in /vagrant/provision-sql folder ..."
@@ -128,7 +131,7 @@ mysql_go() {
 		for sql_file in /vagrant/provision-sql/*.sql
 		do
 			echo "EXECUTING $sql_file..."
-	  		time mysql -u root --password=root < $sql_file
+	  		time mysql -u root --password=$MYSQL_PW < $sql_file
 	  		echo "FINISHED $sql_file"
 	  		echo ""
 		done
