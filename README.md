@@ -42,6 +42,10 @@ Username: root
 Password: root
 Password can be modified through `MYSQL_PW` variable defined in top of provision.sh.
 
+#### PHPMyAdmin
+By default PHPMyAdmin is not part of provisioning. If you want it, uncomment the line containing `phpmyadmin_go` in the main function (top of provision.sh). The username is root and the default password id root. Password can be modified through `PHPMYADMIN_PW` variable defined in top of provision.sh.
+
+
 Technical Details
 -----------------
 * Ubuntu 14.04 64-bit
