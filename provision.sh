@@ -2,7 +2,7 @@
 
 apache_config_file="/etc/apache2/envvars"
 apache_vhost_file="/etc/apache2/sites-available/vagrant_vhost.conf"
-php_config_file="/etc/php5/apache2/php.ini"
+php_config_file="/etc/php/7.0/cli/php.ini"
 xdebug_config_file="/etc/php5/mods-available/xdebug.ini"
 mysql_config_file="/etc/mysql/my.cnf"
 default_apache_index="/var/www/html/index.html"
@@ -21,7 +21,9 @@ main() {
 }
 
 repositories_go() {
-	echo "NOOP"
+	if [ ! -f "/etc/apt/sources.list.d/ondrej-php-trusty.list" ]; then
+		add-apt-repository ppa:ondrej/php
+	fi
 }
 
 update_go() {
@@ -34,10 +36,14 @@ autoremove_go() {
 	apt-get -y autoremove
 }
 
+autoremove_go() {
+	apt-get -y autoremove
+}
+
 network_go() {
 	IPADDR=$(/sbin/ifconfig eth0 | awk '/inet / { print $2 }' | sed 's/addr://')
 	sed -i "s/^${IPADDR}.*//" /etc/hosts
-	echo ${IPADDR} ubuntu.localhost >> /etc/hosts			# Just to quiet down some error messages
+	echo ${IPADDR} ubuntu.localhost >> /etc/hosts # Just to quiet down some error messages
 }
 
 tools_go() {
@@ -80,10 +86,17 @@ EOF
 }
 
 php_go() {
-	apt-get -y install php5 php5-curl php5-mysql php5-sqlite php5-xdebug php5-pear
+    apt-get -y install php7.0 php7.0-fpm php7.0-mysql
+    a2enmod php7
+    ifconfig
+    cp /usr/local/php7/libphp7.so /usr/lib/apache2/modules/
+    cp /usr/local/php7/php7.load /etc/apache2/mods-available/
+    a2dismod mpm_event && a2enmod mpm_prefork && a2enmod php7
 
 	sed -i "s/display_startup_errors = Off/display_startup_errors = On/g" ${php_config_file}
 	sed -i "s/display_errors = Off/display_errors = On/g" ${php_config_file}
+	sed -i "s/post_max_size = 8M/post_max_size = 512M/g" ${php_config_file}
+	sed -i "s/upload_max_filesize = 2M/upload_max_filesize = 512M/g" ${php_config_file}
 
 	if [ ! -f "{$xdebug_config_file}" ]; then
 		cat << EOF > ${xdebug_config_file}
@@ -112,9 +125,9 @@ EOF
 
 mysql_go() {
 	# Install MySQL
-	echo "mysql-server mysql-server/root_password password root" | debconf-set-selections
-	echo "mysql-server mysql-server/root_password_again password root" | debconf-set-selections
-	apt-get -y install mysql-client mysql-server
+	echo "mysql-server-5.6 mysql-server/root_password password root" | debconf-set-selections
+	echo "mysql-server-5.6 mysql-server/root_password_again password root" | debconf-set-selections
+	apt-get -y install mysql-common-5.6 mysql-client-5.6 mysql-server-5.6
 
 	sed -i "s/bind-address\s*=\s*127.0.0.1/bind-address = 0.0.0.0/" ${mysql_config_file}
 
