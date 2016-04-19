@@ -87,6 +87,11 @@ EOF
 
 php_go() {
     apt-get -y install php7.0 php7.0-fpm php7.0-mysql
+    a2enmod php7
+    ifconfig
+    cp /usr/local/php7/libphp7.so /usr/lib/apache2/modules/
+    cp /usr/local/php7/php7.load /etc/apache2/mods-available/
+    a2dismod mpm_event && a2enmod mpm_prefork && a2enmod php7
 
 	sed -i "s/display_startup_errors = Off/display_startup_errors = On/g" ${php_config_file}
 	sed -i "s/display_errors = Off/display_errors = On/g" ${php_config_file}
