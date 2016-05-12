@@ -80,7 +80,7 @@ EOF
 }
 
 php_go() {
-	apt-get -y install php5 php5-curl php5-mysql php5-sqlite php5-xdebug php5-pear
+	apt-get -y install php5 php5-curl php5-mysql php5-sqlite php5-xdebug php-pear
 
 	sed -i "s/display_startup_errors = Off/display_startup_errors = On/g" ${php_config_file}
 	sed -i "s/display_errors = Off/display_errors = On/g" ${php_config_file}
