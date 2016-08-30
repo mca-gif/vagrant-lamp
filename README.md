@@ -13,7 +13,7 @@ And this project aims to make it very easy to spinup a complete LAMP stack in a 
 
 Requirements
 ------------
-* VirtualBox <http://www.virtualbox.com>
+* VirtualBox <http://www.virtualbox.org>
 * Vagrant <http://www.vagrantup.com>
 * Git <http://git-scm.com/>
 
