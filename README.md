@@ -40,6 +40,11 @@ The Apache server is available at <http://localhost:8888>
 Externally the MySQL server is available at port 8889, and when running on the VM it is available as a socket or at port 3306 as usual.
 Username: root
 Password: root
+Password can be modified through `MYSQL_PW` variable defined in top of provision.sh.
+
+#### PHPMyAdmin
+By default PHPMyAdmin is not part of provisioning. If you want it, uncomment the line containing `phpmyadmin_go` in the main function (top of provision.sh). The username is root and the default password id root. Password can be modified through `PHPMYADMIN_PW` variable defined in top of provision.sh.
+
 
 Technical Details
 -----------------
