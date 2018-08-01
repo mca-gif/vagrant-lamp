@@ -2,8 +2,8 @@
 
 apache_config_file="/etc/apache2/envvars"
 apache_vhost_file="/etc/apache2/sites-available/vagrant_vhost.conf"
-php_config_file="/etc/php5/apache2/php.ini"
-xdebug_config_file="/etc/php5/mods-available/xdebug.ini"
+php_config_file="/etc/php/7.0/apache2/php.ini"
+xdebug_config_file="/etc/php/7.0/mods-available/xdebug.ini"
 mysql_config_file="/etc/mysql/my.cnf"
 default_apache_index="/var/www/html/index.html"
 project_web_root="src"
@@ -80,7 +80,10 @@ EOF
 }
 
 php_go() {
-	apt-get -y install php5 php5-curl php5-mysql php5-sqlite php5-xdebug php-pear
+	add-apt-repository ppa:ondrej/php
+	apt-get update
+
+	apt-get -y install php7.0 php7.0-curl php7.0-mysql php7.0-sqlite php7.0-xdebug php-pear
 
 	sed -i "s/display_startup_errors = Off/display_startup_errors = On/g" ${php_config_file}
 	sed -i "s/display_errors = Off/display_errors = On/g" ${php_config_file}
